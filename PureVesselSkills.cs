@@ -26,9 +26,7 @@ namespace PureVesselSkills
 
             ModHooks.AfterSavegameLoadHook += (SaveGameData data) =>
             {
-                GameObject groundSlamAttack = new GameObject("GroundSlamAttack");
-                GameObject.DontDestroyOnLoad(groundSlamAttack);
-                groundSlamAttack.AddComponent<GroundSlamAttack>();
+                HeroController.instance.gameObject.AddComponent<GroundSlamAttack>();
             };
         }
     }

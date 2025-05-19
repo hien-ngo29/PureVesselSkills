@@ -11,9 +11,12 @@ namespace PureVesselSkills
     class GroundSlamAttack : MonoBehaviour
     {
         HeroController hc = HeroController.instance;
+        PlayMakerFSM spellControl;
 
         void Awake()
         {
+            spellControl = hc.spellControl;
+
             PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
 
             if (!PureVesselSkills.preloadedGO.ContainsKey("Plume"))
@@ -25,6 +28,37 @@ namespace PureVesselSkills
                 Destroy(plume.GetComponent<DamageHero>());
                 DontDestroyOnLoad(plume);
                 PureVesselSkills.preloadedGO["Plume"] = plume;
+            }
+
+            ModifySpellFSM();
+        }
+
+        void ModifySpellFSM()
+        {
+            if (enabled)
+            {
+                spellControl.ChangeTransition("Level Check 3", "LEVEL 1", "Scream Antic1 Blasts");
+                spellControl.ChangeTransition("Level Check 3", "LEVEL 2", "Scream Antic2 Blasts");
+
+                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Q1 Land Plumes");
+                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land Plumes");
+
+                if (!PlayerData.instance.GetBool(nameof(PlayerData.equippedCharm_11)))
+                {
+                    spellControl.ChangeTransition("Level Check", "LEVEL 1", "Fireball 1 SmallShots");
+                    spellControl.ChangeTransition("Level Check", "LEVEL 2", "Fireball 2 SmallShots");
+                }
+            }
+            else
+            {
+                spellControl.ChangeTransition("Level Check 3", "LEVEL 1", "Scream Antic1");
+                spellControl.ChangeTransition("Level Check 3", "LEVEL 2", "Scream Antic2");
+
+                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Quake1 Land");
+                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land");
+
+                spellControl.ChangeTransition("Level Check", "LEVEL 1", "Fireball 1");
+                spellControl.ChangeTransition("Level Check", "LEVEL 2", "Fireball 2");
             }
         }
 

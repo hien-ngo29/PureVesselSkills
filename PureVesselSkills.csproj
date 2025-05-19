@@ -55,6 +55,12 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SFCore">
+      <HintPath>$(HollowKnightRefs)/Mods/SFCore/SFCore.dll</HintPath>
+    </Reference>
+    <Reference Include="FrogCore">
+      <HintPath>$(HollowKnightRefs)/Mods/FrogCore/FrogCore.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>

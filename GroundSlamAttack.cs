@@ -13,11 +13,18 @@ namespace PureVesselSkills
         private HeroController hc => HeroController.instance;
         private PlayMakerFSM spellControl;
 
-        void Start()
+        public static void Init()
         {
-            spellControl = hc.gameObject.LocateMyFSM("Spell Control");
+            GameObject obj = new GameObject("GroundSlamAttack");
+            DontDestroyOnLoad(obj);
+            obj.AddComponent<GroundSlamAttack>();
+        }
 
-            PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
+        void Awake()
+        {
+            spellControl = hc.spellControl;
+
+            PlayMakerFSM pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
 
             if (!PureVesselSkills.preloadedGO.ContainsKey("Plume"))
             {
@@ -30,8 +37,8 @@ namespace PureVesselSkills
                 PureVesselSkills.preloadedGO["Plume"] = plume;
             }
 
-            ModifySpellFSM(true);
             InsertSpellEffectsInFsm();
+            ModifySpellFSM(true);
         }
 
         void Update()
@@ -39,6 +46,17 @@ namespace PureVesselSkills
             // Testing if the spike floor works
             if (Input.GetKeyDown(KeyCode.P))
                 CastPlumes();
+        }
+
+        private void InsertSpellEffectsInFsm()
+        {
+            spellControl.CopyState("Quake1 Land", "Q1 Land Plumes");
+            spellControl.CopyState("Q2 Land", "Q2 Land Plumes");
+
+            spellControl.ChangeTransition("Q2 Land Plumes", "FINISHED", "Quake Finish");
+
+            spellControl.InsertMethod("Q1 Land Plumes", () => CastPlumes(), 0);
+            spellControl.InsertMethod("Q2 Land Plumes", () => CastPlumes(), 0);
         }
 
         private void ModifySpellFSM(bool enabled)
@@ -50,15 +68,8 @@ namespace PureVesselSkills
             }
             else
             {
-                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Quake1 Land");
-                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land");
+                spellControl.ChangeTransition("Q2 Land", "FINISHED", "Q2 Pillar");
             }
-        }
-
-        private void InsertSpellEffectsInFsm()
-        {
-            spellControl.InsertMethod("Q1 Land Plumes", () => hc.GetComponent<GroundSlamAttack>().CastPlumes(), 0);
-            spellControl.InsertMethod("Q2 Land Plumes", () => hc.GetComponent<GroundSlamAttack>().CastPlumes(), 0);
         }
 
         private void CastPlumes()

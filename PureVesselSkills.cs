@@ -12,6 +12,8 @@ namespace PureVesselSkills
     {
         public static Dictionary<string, GameObject> preloadedGO = new();
 
+        public override string GetVersion() => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
         public override List<(string, string)> GetPreloadNames()
         {
             return new List<(string, string)>
@@ -23,15 +25,12 @@ namespace PureVesselSkills
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             preloadedGO["PV"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime"];
-
-            ModHooks.AfterSavegameLoadHook += StartMod;
+            On.HeroController.Awake += (On.HeroController.orig_Awake orig, HeroController self) => { StartMod(); orig(self); };
         }
 
-        private void StartMod(SaveGameData data)
+        private void StartMod()
         {
-            GameObject groundSlamAttack = new GameObject("GroundSlamAttack");
-            GameObject.DontDestroyOnLoad(groundSlamAttack);
-            groundSlamAttack.AddComponent<GroundSlamAttack>();
+            GroundSlamAttack.Init();
         }
     }
 }

@@ -39,6 +39,7 @@ namespace PureVesselSkills
 
             InsertSpellEffectsInFsm();
             ModifySpellFSM(true);
+            ChangeStandGroundSlamHeight();
         }
 
         void Update()
@@ -70,6 +71,11 @@ namespace PureVesselSkills
             {
                 spellControl.ChangeTransition("Q2 Land", "FINISHED", "Q2 Pillar");
             }
+        }
+
+        private void ChangeStandGroundSlamHeight()
+        {
+            spellControl.GetAction<SetFloatValue>("Q On Ground", 0).floatValue = 25f;
         }
 
         private void CastPlumes()

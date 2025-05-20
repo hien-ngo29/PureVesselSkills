@@ -10,12 +10,12 @@ namespace PureVesselSkills
 {
     class GroundSlamAttack : MonoBehaviour
     {
-        HeroController hc = HeroController.instance;
-        PlayMakerFSM spellControl;
+        private HeroController hc => HeroController.instance;
+        private PlayMakerFSM spellControl;
 
-        void Awake()
+        void Start()
         {
-            spellControl = hc.spellControl;
+            spellControl = hc.gameObject.LocateMyFSM("Spell Control");
 
             PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
 
@@ -30,44 +30,38 @@ namespace PureVesselSkills
                 PureVesselSkills.preloadedGO["Plume"] = plume;
             }
 
-            ModifySpellFSM();
-        }
-
-        void ModifySpellFSM()
-        {
-            if (enabled)
-            {
-                spellControl.ChangeTransition("Level Check 3", "LEVEL 1", "Scream Antic1 Blasts");
-                spellControl.ChangeTransition("Level Check 3", "LEVEL 2", "Scream Antic2 Blasts");
-
-                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Q1 Land Plumes");
-                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land Plumes");
-
-                if (!PlayerData.instance.GetBool(nameof(PlayerData.equippedCharm_11)))
-                {
-                    spellControl.ChangeTransition("Level Check", "LEVEL 1", "Fireball 1 SmallShots");
-                    spellControl.ChangeTransition("Level Check", "LEVEL 2", "Fireball 2 SmallShots");
-                }
-            }
-            else
-            {
-                spellControl.ChangeTransition("Level Check 3", "LEVEL 1", "Scream Antic1");
-                spellControl.ChangeTransition("Level Check 3", "LEVEL 2", "Scream Antic2");
-
-                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Quake1 Land");
-                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land");
-
-                spellControl.ChangeTransition("Level Check", "LEVEL 1", "Fireball 1");
-                spellControl.ChangeTransition("Level Check", "LEVEL 2", "Fireball 2");
-            }
+            ModifySpellFSM(true);
+            InsertSpellEffectsInFsm();
         }
 
         void Update()
         {
-
+            // Testing if the spike floor works
+            if (Input.GetKeyDown(KeyCode.P))
+                CastPlumes();
         }
 
-        public void CastPlumes(bool upgraded)
+        private void ModifySpellFSM(bool enabled)
+        {
+            if (enabled)
+            {
+                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Q1 Land Plumes");
+                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land Plumes");
+            }
+            else
+            {
+                spellControl.ChangeTransition("Quake1 Down", "HERO LANDED", "Quake1 Land");
+                spellControl.ChangeTransition("Quake2 Down", "HERO LANDED", "Q2 Land");
+            }
+        }
+
+        private void InsertSpellEffectsInFsm()
+        {
+            spellControl.InsertMethod("Q1 Land Plumes", () => hc.GetComponent<GroundSlamAttack>().CastPlumes(), 0);
+            spellControl.InsertMethod("Q2 Land Plumes", () => hc.GetComponent<GroundSlamAttack>().CastPlumes(), 0);
+        }
+
+        private void CastPlumes()
         {
             for (float x = 2; x <= 14; x += 3)
             {
@@ -76,11 +70,11 @@ namespace PureVesselSkills
 
                 GameObject plumeL = Instantiate(PureVesselSkills.preloadedGO["Plume"], new Vector2(pos.x - x, plumeY), Quaternion.identity);
                 plumeL.SetActive(true);
-                plumeL.AddComponent<Plume>().upgraded = upgraded;
+                plumeL.AddComponent<Plume>();
 
                 GameObject plumeR = Instantiate(PureVesselSkills.preloadedGO["Plume"], new Vector2(pos.x + x, plumeY), Quaternion.identity);
                 plumeR.SetActive(true);
-                plumeR.AddComponent<Plume>().upgraded = upgraded;
+                plumeR.AddComponent<Plume>();
             }
         }
     }

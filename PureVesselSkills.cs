@@ -24,10 +24,14 @@ namespace PureVesselSkills
         {
             preloadedGO["PV"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime"];
 
-            ModHooks.AfterSavegameLoadHook += (SaveGameData data) =>
-            {
-                HeroController.instance.gameObject.AddComponent<GroundSlamAttack>();
-            };
+            ModHooks.AfterSavegameLoadHook += StartMod;
+        }
+
+        private void StartMod(SaveGameData data)
+        {
+            GameObject groundSlamAttack = new GameObject("GroundSlamAttack");
+            GameObject.DontDestroyOnLoad(groundSlamAttack);
+            groundSlamAttack.AddComponent<GroundSlamAttack>();
         }
     }
 }

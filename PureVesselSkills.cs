@@ -31,6 +31,7 @@ namespace PureVesselSkills
         private void StartMod()
         {
             GroundSlamAttack.Init();
+            SpikeShootingAttack.Init();
         }
     }
 }

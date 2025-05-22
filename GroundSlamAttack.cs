@@ -23,7 +23,6 @@ namespace PureVesselSkills
         void Awake()
         {
             spellControl = hc.spellControl;
-
             PlayMakerFSM pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
 
             if (!PureVesselSkills.preloadedGO.ContainsKey("Plume"))
@@ -40,13 +39,6 @@ namespace PureVesselSkills
             InsertSpellEffectsInFsm();
             ModifySpellFSM(true);
             ChangeStandGroundSlamHeight();
-        }
-
-        void Update()
-        {
-            // Testing if the spike floor works
-            if (Input.GetKeyDown(KeyCode.P))
-                CastPlumes();
         }
 
         private void InsertSpellEffectsInFsm()

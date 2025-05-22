@@ -5,7 +5,7 @@ using SFCore.Utils;
 using Random = UnityEngine.Random;
 using System.Collections;
 using HutongGames.PlayMaker.Actions;
-
+using FrogCore;
 
 namespace PureVesselSkills
 {
@@ -23,7 +23,7 @@ namespace PureVesselSkills
 
         void Awake()
         {
-            if (!PureVesselSkills.preloadedGO["Spike"])
+            if (!PureVesselSkills.preloadedGO.ContainsKey("Spike"))
             {
                 spellControl = hc.spellControl;
                 PlayMakerFSM pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
@@ -33,26 +33,39 @@ namespace PureVesselSkills
                 spike.layer = (int)GlobalEnums.PhysLayers.HERO_ATTACK;
                 spike.tag = "Hero Spell";
                 Destroy(spike.GetComponent<DamageHero>());
-                // Destroy(spike.LocateMyFSM("Control"));
-                // spike.FindGameObjectInChildren("Dribble L").layer = 9;
-                // spike.FindGameObjectInChildren("Glow").layer = 9;
-                // spike.FindGameObjectInChildren("Beam").layer = 9;
+                spike.FindGameObjectInChildren("Dribble L").layer = 9;
+                spike.FindGameObjectInChildren("Glow").layer = 9;
+                spike.FindGameObjectInChildren("Beam").layer = 9;
                 DontDestroyOnLoad(spike);
                 PureVesselSkills.preloadedGO["Spike"] = spike;
             }
+
+            ChangeFireballCastToSpikeShooting();
         }
 
-        void Update()
+        private void ChangeFireballCastToSpikeShooting()
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            FrogCore.Fsm.FsmUtil.RemoveAction(spellControl, "Fireball 2", 3);
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Fireball 2", 1, ShootSpikes);
+        }
+
+        private IEnumerator ShootSpikes()
+        {
+            Vector2 pos = HeroController.instance.transform.position;
+            float direction = HeroController.instance.gameObject.transform.localScale.x;
+
+            for (float i = 160; i >= 10; i = i - 20)
             {
-                ShootSpikes();
-            }
-        }
+                GameObject spike = Instantiate(PureVesselSkills.preloadedGO["Spike"]);
+                spike.transform.position = new Vector2(pos.x, pos.y - 0.7f);
 
-        private void ShootSpikes()
-        {
-            // TODO: Implement spike shooting logic
+                spike.SetActive(true);
+
+                Spike spikeComponent = spike.AddComponent<Spike>();
+                spikeComponent.angle = i * direction;
+
+                yield return new WaitForSeconds(0.05f);
+            }
         }
     }
 }

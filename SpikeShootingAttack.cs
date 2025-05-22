@@ -54,7 +54,7 @@ namespace PureVesselSkills
             Vector2 pos = HeroController.instance.transform.position;
             float direction = HeroController.instance.gameObject.transform.localScale.x;
 
-            for (float i = 160; i >= 10; i = i - 20)
+            for (float i = 150; i >= 10; i = i - 20)
             {
                 GameObject spike = Instantiate(PureVesselSkills.preloadedGO["Spike"]);
                 spike.transform.position = new Vector2(pos.x, pos.y - 0.7f);

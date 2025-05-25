@@ -21,6 +21,9 @@ namespace PureVesselSkills
 
         private void Awake()
         {
+            Animator anim = gameObject.GetComponent<Animator>();
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
             SetBlastPosition();
             Destroy(gameObject.FindGameObjectInChildren("hero_damager"));
             MakeBlastDamageableToEnemy();
@@ -31,7 +34,7 @@ namespace PureVesselSkills
         private void SetBlastPosition()
         {
             Vector3 pos = gameObject.transform.position;
-            pos.x = (sourcePos.x - 16) + (8 * blastNumber) + Random.Range(-1.5f, 1.5f);
+            pos.x = (sourcePos.x - 20) + (8 * blastNumber) + Random.Range(-1.5f, 1.5f);
             pos.y = sourcePos.y + (spawnUp ? Random.Range(11.88f, 14.08f) : Random.Range(7.88f, 10.08f)) - 7f;
 
             blastNumber++;

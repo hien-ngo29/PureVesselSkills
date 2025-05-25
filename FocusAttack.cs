@@ -82,7 +82,7 @@ namespace PureVesselSkills
         private IEnumerator SpawnBlast()
         {
             Vector3 hcPos = hc.transform.position;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 yield return new WaitForSeconds(Random.Range(0f, 0.45f));
 

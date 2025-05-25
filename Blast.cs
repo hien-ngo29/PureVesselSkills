@@ -24,6 +24,8 @@ namespace PureVesselSkills
             SetBlastPosition();
             Destroy(gameObject.FindGameObjectInChildren("hero_damager"));
             MakeBlastDamageableToEnemy();
+
+            WaitAndDestroy();
         }
 
         private void SetBlastPosition()
@@ -43,6 +45,12 @@ namespace PureVesselSkills
             damageEnemies.attackType = AttackTypes.Spell;
             damageEnemies.direction = 2;
             damageEnemies.damageDealt = Damage;
+        }
+
+        private IEnumerator WaitAndDestroy()
+        {
+            yield return new WaitForSeconds(4f);
+            Destroy(gameObject);
         }
     }
 }

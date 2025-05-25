@@ -28,6 +28,8 @@ namespace PureVesselSkills
             damageEnemies.direction = 4;
             damageEnemies.attackType = AttackTypes.Spell;
             damageEnemies.damageDealt = SpikeDamage;
+
+            WaitAndDestroy();
         }
 
         private void Update()
@@ -41,6 +43,12 @@ namespace PureVesselSkills
             dx = Mathf.Cos(radians) * MovingSpeed * Time.deltaTime;
             dy = Mathf.Sin(radians) * MovingSpeed * Time.deltaTime;
             rb.velocity = new Vector2(dx, dy);
+        }
+
+        private IEnumerator WaitAndDestroy()
+        {
+            yield return new WaitForSeconds(2f);
+            Destroy(gameObject);
         }
     }
 }

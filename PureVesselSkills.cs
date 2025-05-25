@@ -19,6 +19,7 @@ namespace PureVesselSkills
             return new List<(string, string)>
             {
                 ("GG_Hollow_Knight", "Battle Scene/HK Prime"),
+                ("GG_Hollow_Knight", "Battle Scene/HK Prime/Focus Blast"),
                 ("GG_Hollow_Knight", "Battle Scene/Focus Blasts/HK Prime Blast/Blast")
             };
         }
@@ -26,6 +27,7 @@ namespace PureVesselSkills
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             preloadedGO["PV"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime"];
+            preloadedGO["FocusBlast"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime/Focus Blast"];
             preloadedGO["Blast"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/Focus Blasts/HK Prime Blast/Blast"];
             On.HeroController.Awake += (On.HeroController.orig_Awake orig, HeroController self) => { StartMod(); orig(self); };
         }

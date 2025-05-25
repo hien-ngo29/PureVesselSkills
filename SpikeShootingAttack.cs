@@ -16,6 +16,9 @@ namespace PureVesselSkills
 
         public static void Init()
         {
+            if (GameObject.Find("SpikeShootingAttack"))
+                return;
+
             GameObject obj = new GameObject("SpikeShootingAttack");
             DontDestroyOnLoad(obj);
             obj.AddComponent<SpikeShootingAttack>();

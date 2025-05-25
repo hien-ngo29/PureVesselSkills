@@ -15,12 +15,14 @@ namespace PureVesselSkills
 
         public static void Init()
         {
-            if (GameObject.Find("GroundSlamAttack"))
-                return;
-
             GameObject obj = new GameObject("GroundSlamAttack");
             DontDestroyOnLoad(obj);
             obj.AddComponent<GroundSlamAttack>();
+        }
+
+        public static void DestroySelf()
+        {
+            Destroy(GameObject.Find("GroundSlamAttack"));
         }
 
         void Awake()

@@ -29,7 +29,7 @@ namespace PureVesselSkills
             damageEnemies.attackType = AttackTypes.Spell;
             damageEnemies.damageDealt = SpikeDamage;
 
-            WaitAndDestroy();
+            StartCoroutine(WaitAndDestroy());
         }
 
         private void Update()

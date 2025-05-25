@@ -16,12 +16,14 @@ namespace PureVesselSkills
 
         public static void Init()
         {
-            if (GameObject.Find("SpikeShootingAttack"))
-                return;
-
             GameObject obj = new GameObject("SpikeShootingAttack");
             DontDestroyOnLoad(obj);
             obj.AddComponent<SpikeShootingAttack>();
+        }
+
+        public static void DestroySelf()
+        {
+            Destroy(GameObject.Find("SpikeShootingAttack"));
         }
 
         void Awake()
@@ -48,8 +50,14 @@ namespace PureVesselSkills
 
         private void ChangeFireballCastToSpikeShooting()
         {
-            FrogCore.Fsm.FsmUtil.RemoveAction(spellControl, "Fireball 2", 3);
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Fireball 2", 1, ShootSpikes);
+            spellControl.CopyState("Fireball 2", "Spike Attack");
+
+            FrogCore.Fsm.FsmUtil.RemoveAction(spellControl, "Spike Attack", 3);
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Spike Attack", 1, ShootSpikes);
+
+            spellControl.ChangeTransition("Level Check", "LEVEL 1", "Spike Attack");
+            spellControl.ChangeTransition("Level Check", "LEVEL 2", "Spike Attack");
+            spellControl.ChangeTransition("Spike Attack", "FINISHED", "Fireball Recoil");
         }
 
         private IEnumerator ShootSpikes()

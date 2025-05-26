@@ -42,7 +42,7 @@ namespace PureVesselSkills
         {
             orig(self, go, damageSide, damageAmount, hazardType);
             focusCancelled = false;
-            DestroyHeroFocusBlast();
+            FocusBlast.DestroySelf();
         }
 
         private void AddAttackToFSM()
@@ -71,7 +71,7 @@ namespace PureVesselSkills
             spellControl.ChangeTransition("Focus Blast", "BUTTON UP", "Focus Cancel");
             spellControl.ChangeTransition("Focus Blast", "LEFT GROUND", "Focus Cancel");
 
-            spellControl.InsertMethod("Focus Cancel", () => { focusCancelled = true; DestroyHeroFocusBlast(); }, 14);
+            spellControl.InsertMethod("Focus Cancel", () => { focusCancelled = true; FocusBlast.DestroySelf(); }, 14);
         }
 
         private IEnumerator SpawnFocusBlast()
@@ -85,16 +85,8 @@ namespace PureVesselSkills
             }
 
             GameObject focusBlast = Instantiate(PureVesselSkills.preloadedGO["FocusBlast"], hc.transform.position, Quaternion.identity);
-            focusBlast.name = "Hero Focus Blast";
+            focusBlast.AddComponent<FocusBlast>();
             focusBlast.SetActive(true);
-
-            yield return new WaitForSeconds(2.5f);
-            DestroyHeroFocusBlast();
-        }
-
-        private void DestroyHeroFocusBlast()
-        {
-            Destroy(GameObject.Find("Hero Focus Blast"));
         }
 
         private IEnumerator SpawnBlast()

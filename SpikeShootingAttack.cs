@@ -28,9 +28,10 @@ namespace PureVesselSkills
 
         void Awake()
         {
+            spellControl = hc.spellControl;
+
             if (!PureVesselSkills.preloadedGO.ContainsKey("Spike"))
             {
-                spellControl = hc.spellControl;
                 PlayMakerFSM pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
 
                 GameObject spike = Instantiate(pvControl.GetAction<FlingObjectsFromGlobalPoolTime>("SmallShot LowHigh", 2).gameObject.Value);

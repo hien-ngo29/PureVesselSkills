@@ -18,17 +18,34 @@ namespace PureVesselSkills
         public int blastNumber = 0;
         public Vector3 sourcePos { get; set; }
         private const int Damage = 80;
+        private Animator anim;
 
         private void Awake()
         {
-            Animator anim = gameObject.GetComponent<Animator>();
+            anim = gameObject.GetComponent<Animator>();
             anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
             SetBlastPosition();
             Destroy(gameObject.FindGameObjectInChildren("hero_damager"));
-            MakeBlastDamageableToEnemy();
+            AddDamageEnemiesComponentToBlast();
 
+            StartCoroutine(WaitAndAddHitboxDamage());
             StartCoroutine(WaitAndDestroy());
+        }
+
+        private IEnumerator WaitAndAddHitboxDamage()
+        {
+            yield return new WaitForSeconds(0.858f);
+
+            CircleCollider2D col = gameObject.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            col.offset = Vector2.down;
+            col.radius = 4f;
+
+            for (int i = 0; i < 10; i++)
+                yield return null;
+
+            Destroy(col);
         }
 
         private void SetBlastPosition()
@@ -41,7 +58,7 @@ namespace PureVesselSkills
             gameObject.transform.position = pos;
         }
 
-        private void MakeBlastDamageableToEnemy()
+        private void AddDamageEnemiesComponentToBlast()
         {
             DamageEnemies damageEnemies = gameObject.AddComponent<DamageEnemies>();
             damageEnemies.ignoreInvuln = false;

@@ -15,7 +15,7 @@ namespace PureVesselSkills
         private float dy;
 
         private Rigidbody2D rb;
-        private const int SpikeDamage = 60;
+        private const int SpikeDamage = 40;
         private const float MovingSpeed = 1350f;
 
         private void Awake()

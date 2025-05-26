@@ -15,6 +15,7 @@ namespace PureVesselSkills
     {
         private HeroController hc => HeroController.instance;
         private PlayMakerFSM spellControl;
+        private bool focusCancelled = false;
 
         public static void Init()
         {
@@ -53,18 +54,25 @@ namespace PureVesselSkills
             spellControl.CopyState("Focus Start", "Focus Blast");
 
             FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Blast", 0, SpawnFocusBlast);
+            spellControl.InsertMethod("Focus Blast", () => focusCancelled = false, 0);
             spellControl.ChangeTransition("Start Slug Anim", "FINISHED", "Focus Blast");
 
             spellControl.ChangeTransition("Focus Blast", "FINISHED", "Set Focus Speed");
             spellControl.ChangeTransition("Focus Blast", "BUTTON UP", "Focus Cancel");
             spellControl.ChangeTransition("Focus Blast", "LEFT GROUND", "Focus Cancel");
 
-            spellControl.InsertMethod("Focus Cancel", DestroyHeroFocusBlast, 14);
+            spellControl.InsertMethod("Focus Cancel", () => { focusCancelled = true; DestroyHeroFocusBlast(); }, 14);
         }
 
         private IEnumerator SpawnFocusBlast()
         {
             yield return new WaitForSeconds(0.25f);
+
+            if (focusCancelled)
+            {
+                focusCancelled = false;
+                yield break;
+            }
 
             GameObject focusBlast = Instantiate(PureVesselSkills.preloadedGO["FocusBlast"], hc.transform.position, Quaternion.identity);
             focusBlast.name = "Hero Focus Blast";

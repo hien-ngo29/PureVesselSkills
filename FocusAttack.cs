@@ -4,6 +4,7 @@ using UnityEngine;
 using SFCore.Utils;
 using Random = UnityEngine.Random;
 using System.Collections;
+using GlobalEnums;
 using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMaker;
 using FrogCore;
@@ -31,8 +32,17 @@ namespace PureVesselSkills
 
         private void Awake()
         {
+            On.HeroController.TakeDamage += OnHeroTakeDamage;
+
             spellControl = hc.spellControl;
             AddAttackToFSM();
+        }
+
+        private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
+        {
+            orig(self, go, damageSide, damageAmount, hazardType);
+            focusCancelled = false;
+            DestroyHeroFocusBlast();
         }
 
         private void AddAttackToFSM()

@@ -71,15 +71,6 @@ namespace PureVesselSkills
 
         private void AddFocusBlastAttackToFSM()
         {
-            // spellControl.CopyState("Focus Start", "Focus Blast");
-
-            // FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Blast", 0, SpawnFocusBlast);
-            // spellControl.InsertMethod("Focus Blast", () => focusCancelled = false, 0);
-            // spellControl.ChangeTransition("Start Slug Anim", "FINISHED", "Focus Blast");
-
-            // spellControl.ChangeTransition("Focus Blast", "FINISHED", "Set Focus Speed");
-            // spellControl.ChangeTransition("Focus Blast", "BUTTON UP", "Focus Cancel");
-            // spellControl.ChangeTransition("Focus Blast", "LEFT GROUND", "Focus Cancel");
             AddBlastOnFocusToFSM();
             AddCancelBlastOnFocusStartupToFSM();
             AddCancelBlastWhileFocusingToFSM();
@@ -94,7 +85,7 @@ namespace PureVesselSkills
         private void AddCancelBlastOnFocusStartupToFSM()
         {
             spellControl.AddState("Cancel Blast");
-            spellControl.AddMethod("Cancel Blast", () => { MyLogger.Log("Hello?"); focusCancelled = true; FocusBlast.DestroySelf(); });
+            spellControl.AddMethod("Cancel Blast", () => { focusCancelled = true; FocusBlast.DestroySelf(); });
             spellControl.ChangeTransition("Focus Start", "BUTTON UP", "Cancel Blast");
             spellControl.ChangeTransition("Focus Start", "LEFT GROUND", "Cancel Blast");
 
@@ -108,7 +99,7 @@ namespace PureVesselSkills
         private void AddCancelBlastWhileFocusingToFSM()
         {
             spellControl.AddState("Cancel Blast 2");
-            spellControl.AddMethod("Cancel Blast 2", () => { MyLogger.Log("Hello? 2"); focusCancelled = true; FocusBlast.DestroySelf(); });
+            spellControl.AddMethod("Cancel Blast 2", () => { focusCancelled = true; FocusBlast.DestroySelf(); });
             spellControl.ChangeTransition("Focus", "BUTTON UP", "Cancel Blast 2");
             spellControl.ChangeTransition("Focus", "LEFT GROUND", "Cancel Blast 2");
 

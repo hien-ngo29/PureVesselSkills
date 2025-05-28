@@ -52,8 +52,12 @@ namespace PureVesselSkills
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
         {
             orig(self, go, damageSide, damageAmount, hazardType);
-            focusCancelled = false;
-            FocusBlast.DestroySelf();
+
+            if (!PlayerData.instance.GetBool("isInvincible"))
+            {
+                focusCancelled = false;
+                FocusBlast.DestroySelf();
+            }
         }
 
         private void AddAttackToFSM()

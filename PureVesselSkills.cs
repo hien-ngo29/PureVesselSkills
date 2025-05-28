@@ -8,12 +8,21 @@ using HutongGames.PlayMaker;
 
 namespace PureVesselSkills
 {
-    public class PureVesselSkills : Mod
+    public class PureVesselSkills : Mod, ITogglableMod
     {
         public static Dictionary<string, GameObject> preloadedGO = new();
         public static AudioSource audioSource;
 
         public override string GetVersion() => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        public void Unload()
+        {
+            PureVesselAudioSource.DestroySelf();
+            GroundSlamAttack.DestroySelf();
+            SpikeShootingAttack.DestroySelf();
+            FocusAttack.DestroySelf();
+            On.HeroController.Awake -= (On.HeroController.orig_Awake orig, HeroController self) => { StartMod(); orig(self); };
+        }
 
         public override List<(string, string)> GetPreloadNames()
         {

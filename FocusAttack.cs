@@ -52,12 +52,10 @@ namespace PureVesselSkills
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
         {
             orig(self, go, damageSide, damageAmount, hazardType);
+            PlayerData playerData = PlayerData.instance;
 
-            if (!PlayerData.instance.GetBool("isInvincible"))
-            {
-                focusCancelled = false;
-                FocusBlast.DestroySelf();
-            }
+            focusCancelled = false;
+            FocusBlast.DestroySelf();
         }
 
         private void AddAttackToFSM()
@@ -68,25 +66,57 @@ namespace PureVesselSkills
 
         private void AddAfterBlastAttackToFSM()
         {
-            spellControl.CopyState("Focus Heal", "Focus Attack");
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Attack", 16, SpawnBlast);
-            spellControl.ChangeTransition("Set HP Amount", "FINISHED", "Focus Attack");
-            spellControl.ChangeTransition("Focus Attack", "WAIT", "Full HP?");
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Heal", 16, SpawnBlast);
         }
 
         private void AddFocusBlastAttackToFSM()
         {
-            spellControl.CopyState("Focus Start", "Focus Blast");
+            // spellControl.CopyState("Focus Start", "Focus Blast");
 
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Blast", 0, SpawnFocusBlast);
-            spellControl.InsertMethod("Focus Blast", () => focusCancelled = false, 0);
-            spellControl.ChangeTransition("Start Slug Anim", "FINISHED", "Focus Blast");
+            // FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Blast", 0, SpawnFocusBlast);
+            // spellControl.InsertMethod("Focus Blast", () => focusCancelled = false, 0);
+            // spellControl.ChangeTransition("Start Slug Anim", "FINISHED", "Focus Blast");
 
-            spellControl.ChangeTransition("Focus Blast", "FINISHED", "Set Focus Speed");
-            spellControl.ChangeTransition("Focus Blast", "BUTTON UP", "Focus Cancel");
-            spellControl.ChangeTransition("Focus Blast", "LEFT GROUND", "Focus Cancel");
+            // spellControl.ChangeTransition("Focus Blast", "FINISHED", "Set Focus Speed");
+            // spellControl.ChangeTransition("Focus Blast", "BUTTON UP", "Focus Cancel");
+            // spellControl.ChangeTransition("Focus Blast", "LEFT GROUND", "Focus Cancel");
+            AddBlastOnFocusToFSM();
+            AddCancelBlastOnFocusStartupToFSM();
+            AddCancelBlastWhileFocusingToFSM();
+        }
 
-            spellControl.InsertMethod("Focus Cancel", () => { focusCancelled = true; FocusBlast.DestroySelf(); }, 14);
+        private void AddBlastOnFocusToFSM()
+        {
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Start", 0, SpawnFocusBlast);
+            spellControl.InsertMethod("Focus Start", () => focusCancelled = false, 0);
+        }
+
+        private void AddCancelBlastOnFocusStartupToFSM()
+        {
+            spellControl.AddState("Cancel Blast");
+            spellControl.AddMethod("Cancel Blast", () => { MyLogger.Log("Hello?"); focusCancelled = true; FocusBlast.DestroySelf(); });
+            spellControl.ChangeTransition("Focus Start", "BUTTON UP", "Cancel Blast");
+            spellControl.ChangeTransition("Focus Start", "LEFT GROUND", "Cancel Blast");
+
+            NextFrameEvent focusBlastNextAction = new NextFrameEvent();
+            focusBlastNextAction.sendEvent = new FsmEvent("FINISHED");
+
+            spellControl.AddAction("Cancel Blast", focusBlastNextAction);
+            spellControl.AddTransition("Cancel Blast", "FINISHED", "Focus Cancel");
+        }
+
+        private void AddCancelBlastWhileFocusingToFSM()
+        {
+            spellControl.AddState("Cancel Blast 2");
+            spellControl.AddMethod("Cancel Blast 2", () => { MyLogger.Log("Hello? 2"); focusCancelled = true; FocusBlast.DestroySelf(); });
+            spellControl.ChangeTransition("Focus", "BUTTON UP", "Cancel Blast 2");
+            spellControl.ChangeTransition("Focus", "LEFT GROUND", "Cancel Blast 2");
+
+            NextFrameEvent focusBlastNextAction = new NextFrameEvent();
+            focusBlastNextAction.sendEvent = new FsmEvent("FINISHED");
+
+            spellControl.AddAction("Cancel Blast 2", focusBlastNextAction);
+            spellControl.AddTransition("Cancel Blast 2", "FINISHED", "Grace Check");
         }
 
         private IEnumerator SpawnFocusBlast()

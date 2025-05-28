@@ -18,10 +18,7 @@ namespace PureVesselSkills
         private PlayMakerFSM spellControl;
         private bool focusCancelled = false;
 
-        private AudioSource audioSource;
         private AudioClip blastSound;
-        private AudioClip focusingSound;
-        private AudioClip focusCompleteSound;
 
         public static void Init()
         {

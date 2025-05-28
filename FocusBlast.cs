@@ -14,12 +14,28 @@ namespace PureVesselSkills
 {
     public class FocusBlast : MonoBehaviour
     {
+        private AudioSource audioSource;
+        private AudioClip ballUpSound;
+        private AudioClip completeSound;
+
         private void Awake()
         {
+            PreloadAudio();
+            audioSource.PlayOneShot(ballUpSound, 1f);
+
             gameObject.name = "Hero Focus Blast";
             AddDamageEnemiesComponentToBlast();
             StartCoroutine(WaitAndAddHitboxDamage());
             StartCoroutine(WaitAndDestroy());
+        }
+
+        private void PreloadAudio()
+        {
+            PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
+            ballUpSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Ball Up", 2).audioClip.Value;
+            completeSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Focus Burst", 8).audioClip.Value;
+
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
 
         private void AddDamageEnemiesComponentToBlast()
@@ -34,6 +50,8 @@ namespace PureVesselSkills
         private IEnumerator WaitAndAddHitboxDamage()
         {
             yield return new WaitForSeconds(0.891f);
+
+            audioSource.PlayOneShot(completeSound, 1f);
 
             CircleCollider2D col = gameObject.AddComponent<CircleCollider2D>();
             col.isTrigger = true;

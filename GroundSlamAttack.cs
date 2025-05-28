@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using SFCore.Utils;
 using Random = UnityEngine.Random;
 using System.Collections;
@@ -12,6 +13,10 @@ namespace PureVesselSkills
     {
         private HeroController hc => HeroController.instance;
         private PlayMakerFSM spellControl;
+        private PlayMakerFSM pvControl;
+
+        private AudioSource audioSource;
+        private AudioClip plumeUpSound;
 
         public static void Init()
         {
@@ -28,7 +33,7 @@ namespace PureVesselSkills
         void Awake()
         {
             spellControl = hc.spellControl;
-            PlayMakerFSM pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
+            pvControl = Instantiate(PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control"), hc.transform);
 
             if (!PureVesselSkills.preloadedGO.ContainsKey("Plume"))
             {
@@ -41,9 +46,16 @@ namespace PureVesselSkills
                 PureVesselSkills.preloadedGO["Plume"] = plume;
             }
 
+            PreloadAudio();
             InsertSpellEffectsInFsm();
             ModifySpellFSM(true);
             ChangeStandGroundSlamHeight();
+        }
+
+        private void PreloadAudio()
+        {
+            audioSource = GameObject.Find("PureVesselAudioSource").GetComponent<AudioSource>();
+            plumeUpSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Plume Up", 1).audioClip.Value;
         }
 
         private void InsertSpellEffectsInFsm()
@@ -55,6 +67,9 @@ namespace PureVesselSkills
 
             spellControl.InsertMethod("Q1 Land Plumes", () => CastPlumes(), 0);
             spellControl.InsertMethod("Q2 Land Plumes", () => CastPlumes(), 0);
+
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Q1 Land Plumes", 0, CastPlumes);
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Q2 Land Plumes", 0, CastPlumes);
         }
 
         private void ModifySpellFSM(bool enabled)
@@ -75,7 +90,7 @@ namespace PureVesselSkills
             spellControl.GetAction<SetFloatValue>("Q On Ground", 0).floatValue = 25f;
         }
 
-        private void CastPlumes()
+        private IEnumerator CastPlumes()
         {
             for (float x = 2; x <= 14; x += 3)
             {
@@ -90,6 +105,9 @@ namespace PureVesselSkills
                 plumeR.SetActive(true);
                 plumeR.AddComponent<Plume>();
             }
+
+            yield return new WaitForSeconds(0.25f);
+            audioSource.PlayOneShot(plumeUpSound, GameManager.instance.GetImplicitCinematicVolume());
         }
     }
 }

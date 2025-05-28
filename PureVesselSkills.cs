@@ -35,10 +35,12 @@ namespace PureVesselSkills
 
         private void StartMod()
         {
+            PureVesselAudioSource.DestroySelf();
             GroundSlamAttack.DestroySelf();
             SpikeShootingAttack.DestroySelf();
             FocusAttack.DestroySelf();
 
+            PureVesselAudioSource.Init();
             GroundSlamAttack.Init();
             SpikeShootingAttack.Init();
             FocusAttack.Init();

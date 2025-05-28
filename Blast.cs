@@ -17,6 +17,10 @@ namespace PureVesselSkills
         public bool spawnUp = false;
         public int blastNumber = 0;
         public Vector3 sourcePos { get; set; }
+
+        public AudioClip blastSound;
+        private AudioSource audioSource;
+
         private const int Damage = 80;
         private Animator anim;
 
@@ -24,6 +28,8 @@ namespace PureVesselSkills
         {
             anim = gameObject.GetComponent<Animator>();
             anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
+            audioSource = gameObject.AddComponent<AudioSource>();
 
             SetBlastPosition();
             Destroy(gameObject.FindGameObjectInChildren("hero_damager"));
@@ -37,6 +43,8 @@ namespace PureVesselSkills
         {
             yield return new WaitForSeconds(0.858f);
 
+            PlayBlastSound();
+
             CircleCollider2D col = gameObject.AddComponent<CircleCollider2D>();
             col.isTrigger = true;
             col.offset = Vector2.down;
@@ -46,6 +54,12 @@ namespace PureVesselSkills
                 yield return null;
 
             Destroy(col);
+        }
+
+        private void PlayBlastSound()
+        {
+            audioSource.pitch = Random.Range(1f, 1.25f);
+            audioSource.PlayOneShot(blastSound, 1f);
         }
 
         private void SetBlastPosition()

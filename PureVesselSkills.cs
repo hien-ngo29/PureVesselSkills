@@ -11,6 +11,7 @@ namespace PureVesselSkills
     public class PureVesselSkills : Mod
     {
         public static Dictionary<string, GameObject> preloadedGO = new();
+        public static AudioSource audioSource;
 
         public override string GetVersion() => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -20,7 +21,8 @@ namespace PureVesselSkills
             {
                 ("GG_Hollow_Knight", "Battle Scene/HK Prime"),
                 ("GG_Hollow_Knight", "Battle Scene/HK Prime/Focus Blast"),
-                ("GG_Hollow_Knight", "Battle Scene/Focus Blasts/HK Prime Blast/Blast")
+                ("GG_Hollow_Knight", "Battle Scene/Focus Blasts/HK Prime Blast/Blast"),
+                ("GG_Hollow_Knight", "Battle Scene/Focus Blasts/HK Prime Blast")
             };
         }
 
@@ -29,6 +31,7 @@ namespace PureVesselSkills
             preloadedGO["PV"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime"];
             preloadedGO["FocusBlast"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/HK Prime/Focus Blast"];
             preloadedGO["Blast"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/Focus Blasts/HK Prime Blast/Blast"];
+            preloadedGO["HKPrimeBlast"] = preloadedObjects["GG_Hollow_Knight"]["Battle Scene/Focus Blasts/HK Prime Blast"];
 
             On.HeroController.Awake += (On.HeroController.orig_Awake orig, HeroController self) => { StartMod(); orig(self); };
         }
@@ -44,6 +47,8 @@ namespace PureVesselSkills
             GroundSlamAttack.Init();
             SpikeShootingAttack.Init();
             FocusAttack.Init();
+
+            audioSource = GameObject.Find("PureVesselAudioSource").GetComponent<AudioSource>();
         }
     }
 }

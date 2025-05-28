@@ -18,6 +18,11 @@ namespace PureVesselSkills
         private PlayMakerFSM spellControl;
         private bool focusCancelled = false;
 
+        private AudioSource audioSource;
+        private AudioClip blastSound;
+        private AudioClip focusingSound;
+        private AudioClip focusCompleteSound;
+
         public static void Init()
         {
             GameObject obj = new GameObject("FocusAttack");
@@ -35,7 +40,16 @@ namespace PureVesselSkills
             On.HeroController.TakeDamage += OnHeroTakeDamage;
 
             spellControl = hc.spellControl;
+
+            PreloadAudio();
             AddAttackToFSM();
+        }
+
+        private void PreloadAudio()
+        {
+            PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
+            PlayMakerFSM hkPrimeBlastControl = PureVesselSkills.preloadedGO["HKPrimeBlast"].LocateMyFSM("Control");
+            blastSound = (AudioClip)hkPrimeBlastControl.GetAction<AudioPlayerOneShotSingle>("Sound", 1).audioClip.Value;
         }
 
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
@@ -101,6 +115,7 @@ namespace PureVesselSkills
                 blastScript.spawnUp = (i % 2 != 0);
                 blastScript.blastNumber = i;
                 blastScript.sourcePos = hcPos;
+                blastScript.blastSound = blastSound;
                 blast.SetActive(true);
             }
         }

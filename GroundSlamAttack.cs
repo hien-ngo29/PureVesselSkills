@@ -15,7 +15,6 @@ namespace PureVesselSkills
         private PlayMakerFSM spellControl;
         private PlayMakerFSM pvControl;
 
-        private AudioSource audioSource;
         private AudioClip plumeUpSound;
 
         public static void Init()
@@ -54,7 +53,6 @@ namespace PureVesselSkills
 
         private void PreloadAudio()
         {
-            audioSource = GameObject.Find("PureVesselAudioSource").GetComponent<AudioSource>();
             plumeUpSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Plume Up", 1).audioClip.Value;
         }
 
@@ -107,7 +105,7 @@ namespace PureVesselSkills
             }
 
             yield return new WaitForSeconds(0.25f);
-            audioSource.PlayOneShot(plumeUpSound, GameManager.instance.GetImplicitCinematicVolume());
+            PureVesselSkills.audioSource.PlayOneShot(plumeUpSound, GameManager.instance.GetImplicitCinematicVolume());
         }
     }
 }

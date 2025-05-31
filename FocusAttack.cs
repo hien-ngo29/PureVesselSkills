@@ -17,6 +17,7 @@ namespace PureVesselSkills
         private HeroController hc => HeroController.instance;
         private PlayMakerFSM spellControl;
         private bool focusCancelled = false;
+        private bool focusCompleted = false;
 
         private AudioClip blastSound;
 
@@ -71,43 +72,19 @@ namespace PureVesselSkills
 
         private void AddFocusBlastAttackToFSM()
         {
-            AddBlastOnFocusToFSM();
-            AddCancelBlastOnFocusStartupToFSM();
-            AddCancelBlastWhileFocusingToFSM();
-        }
-
-        private void AddBlastOnFocusToFSM()
-        {
             FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Start", 0, SpawnFocusBlast);
             spellControl.InsertMethod("Focus Start", () => focusCancelled = false, 0);
-        }
 
-        private void AddCancelBlastOnFocusStartupToFSM()
-        {
-            spellControl.AddState("Cancel Blast");
-            spellControl.AddMethod("Cancel Blast", () => { focusCancelled = true; FocusBlast.DestroySelf(); });
-            spellControl.ChangeTransition("Focus Start", "BUTTON UP", "Cancel Blast");
-            spellControl.ChangeTransition("Focus Start", "LEFT GROUND", "Cancel Blast");
-
-            NextFrameEvent focusBlastNextAction = new NextFrameEvent();
-            focusBlastNextAction.sendEvent = new FsmEvent("FINISHED");
-
-            spellControl.AddAction("Cancel Blast", focusBlastNextAction);
-            spellControl.AddTransition("Cancel Blast", "FINISHED", "Focus Cancel");
-        }
-
-        private void AddCancelBlastWhileFocusingToFSM()
-        {
-            spellControl.AddState("Cancel Blast 2");
-            spellControl.AddMethod("Cancel Blast 2", () => { focusCancelled = true; FocusBlast.DestroySelf(); });
-            spellControl.ChangeTransition("Focus", "BUTTON UP", "Cancel Blast 2");
-            spellControl.ChangeTransition("Focus", "LEFT GROUND", "Cancel Blast 2");
-
-            NextFrameEvent focusBlastNextAction = new NextFrameEvent();
-            focusBlastNextAction.sendEvent = new FsmEvent("FINISHED");
-
-            spellControl.AddAction("Cancel Blast 2", focusBlastNextAction);
-            spellControl.AddTransition("Cancel Blast 2", "FINISHED", "Grace Check");
+            spellControl.InsertMethod("Set HP Amount", () => focusCompleted = true, 0);
+            spellControl.InsertMethod("Focus Start", () => { MyLogger.Log("Toggled!"); focusCompleted = false; }, 0);
+            spellControl.InsertMethod("Focus Cancel", () =>
+            {
+                MyLogger.Log("Its kinda working");
+                if (!focusCompleted)
+                {
+                    FocusBlast.DestroySelf();
+                }
+            }, 0);
         }
 
         private IEnumerator SpawnFocusBlast()

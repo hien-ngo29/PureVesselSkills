@@ -76,10 +76,9 @@ namespace PureVesselSkills
             spellControl.InsertMethod("Focus Start", () => focusCancelled = false, 0);
 
             spellControl.InsertMethod("Set HP Amount", () => focusCompleted = true, 0);
-            spellControl.InsertMethod("Focus Start", () => { MyLogger.Log("Toggled!"); focusCompleted = false; }, 0);
+            spellControl.InsertMethod("Focus Start", () => { focusCompleted = false; }, 0);
             spellControl.InsertMethod("Focus Cancel", () =>
             {
-                MyLogger.Log("Its kinda working");
                 if (!focusCompleted)
                 {
                     FocusBlast.DestroySelf();

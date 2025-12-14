@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build and launch game",
+      "type": "shell",
+      "command": "dotnet build && '/home/hien/GOG Games/Hollow Knight/start.sh'",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

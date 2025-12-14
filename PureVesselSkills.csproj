@@ -30,6 +30,7 @@
     <Copy Condition="'$(DocumentationFile)' == ''" SourceFiles="$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(HollowKnightRefs)/Mods/$(TargetName)/" />
 
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportDir)/$(TargetName)/" />
+    <Copy SourceFiles="lib/AbilityChanger.dll" DestinationFolder="$(ExportDir)/$(TargetName)/" />
 
     <Copy Condition="'$(DocumentationFile)' != ''" SourceFiles="ReadMe.md;$(TargetPath);$(TargetDir)/$(TargetName).pdb;$(TargetDir)/$(TargetName).xml" DestinationFolder="$(ExportDir)/$(TargetName)/zip/" />
     <Copy Condition="'$(DocumentationFile)' == ''" SourceFiles="ReadMe.md;$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(ExportDir)/$(TargetName)/zip/" />
@@ -52,6 +53,13 @@
     <WriteLinesToFile File="$(ExportDir)/$(TargetName)/SHA.txt" Lines="$(OutputFileString);@(FilesWithHashes->'%(FileHash)');$(OutputZipString);@(ZipFilesWithHashes->'%(FileHash)')" Overwrite="true" Encoding="UTF-8" />
   </Target>
   <ItemGroup>
+    <Reference Include="Satchel">
+      <HintPath>$(HollowKnightRefs)/Mods/Satchel/Satchel.dll</HintPath>
+    </Reference>
+    <Reference Include="AbilityChanger">
+      <HintPath>lib/AbilityChanger.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>

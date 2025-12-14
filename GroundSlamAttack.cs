@@ -1,14 +1,35 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Audio;
+using Modding;
 using SFCore.Utils;
-using Random = UnityEngine.Random;
-using System.Collections;
+using System;
+using UnityEngine;
+using AbilityChanger;
+using AbilityChanger.Base;
 using HutongGames.PlayMaker.Actions;
+using System.Collections;
 
 namespace PureVesselSkills
 {
+    public class GroundSlamAttackAbility: Quake
+    {
+        static Sprite getActiveSprite() { return Satchel.AssemblyUtils.GetSpriteFromResources("pv.spng"); }
+        public override string name { get => "Soul Pillars"; set { } }
+        public override string title { get => "Soul Pillars"; set { } }
+        public override string description { get => "Jut up spikes on Descending Dark/Desolate Dive"; set { } }
+        public override Sprite activeSprite { get => getActiveSprite(); set { } }
+
+        public GroundSlamAttackAbility()
+        {
+            OnSelect += () =>
+            {
+                GroundSlamAttack.Init();
+            };
+            OnUnselect += () =>
+            {
+                GroundSlamAttack.DestroySelf();
+            };
+        }
+    }
+
     class GroundSlamAttack : MonoBehaviour
     {
         private HeroController hc => HeroController.instance;

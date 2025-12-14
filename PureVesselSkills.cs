@@ -2,9 +2,11 @@ using Modding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using static AbilityChanger.AbilityChanger;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker;
+using AbilityChanger;
 
 namespace PureVesselSkills
 {
@@ -12,6 +14,8 @@ namespace PureVesselSkills
     {
         public static Dictionary<string, GameObject> preloadedGO = new();
         public static AudioSource audioSource;
+
+        List<Ability> abilities;
 
         public override string GetVersion() => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
@@ -38,15 +42,24 @@ namespace PureVesselSkills
 
         private void StartMod()
         {
-            PureVesselAudioSource.DestroySelf();
-            GroundSlamAttack.DestroySelf();
-            SpikeShootingAttack.DestroySelf();
-            FocusAttack.DestroySelf();
+            // PureVesselAudioSource.DestroySelf();
+            // GroundSlamAttack.DestroySelf();
+            // SpikeShootingAttack.DestroySelf();
+            // FocusAttack.DestroySelf();
 
             PureVesselAudioSource.Init();
-            GroundSlamAttack.Init();
-            SpikeShootingAttack.Init();
-            FocusAttack.Init();
+            // GroundSlamAttack.Init();
+            // SpikeShootingAttack.Init();
+            // FocusAttack.Init();
+
+            abilities = new() {
+                new GroundSlamAttackAbility()
+            };
+
+            foreach (var ability in abilities)
+            {
+                RegisterAbility(ability);
+            }
 
             audioSource = GameObject.Find("PureVesselAudioSource").GetComponent<AudioSource>();
         }

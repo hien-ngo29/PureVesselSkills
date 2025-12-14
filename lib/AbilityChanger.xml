@@ -1,0 +1,357 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AbilityChanger</name>
+    </assembly>
+    <members>
+        <member name="P:AbilityChanger.Ability.name">
+            <summary>
+            The ability name. It acts as an indentifier for the ability inside the manager. Abilities names must be unique inside each manager
+            </summary>
+        </member>
+        <member name="P:AbilityChanger.Ability.title">
+            <summary>
+            The ability title shown when displayed inside the inventory
+            </summary>
+        </member>
+        <member name="P:AbilityChanger.Ability.description">
+            <summary>
+            The description shown inside the inventory
+            </summary>
+        </member>
+        <member name="P:AbilityChanger.Ability.activeSprite">
+            <summary>
+            The sprite shown in the inventory
+            </summary>
+        </member>
+        <member name="P:AbilityChanger.Ability.abilityType">
+            <summary>
+            The name of the ability it'll replace/ name of the manager where it'll be contained
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Ability.hasAbility">
+            <summary>
+            The method that controlls if the ability can be use bt AC. Default behaviour is to point to <c>aquiredAbility</c>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:AbilityChanger.Ability.aquiredAbility">
+            <summary>
+            The flag AC uses to save wheter the ability was aquired in the save file
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Ability.setAquireAbility(System.Boolean,System.Boolean)">
+            <summary>
+            The method called aquire/unaquire abilities at gametime. If your ability was the first aquiried on the save (including the vannila one) it'll be auto selected regardless of <c> autoselect</c>
+            </summary>
+            <param name="value"> true/false => aquired/unaquired</param>
+            <param name="autoselect">if the ability should be autoselected on aquired</param>
+        </member>
+        <member name="F:AbilityChanger.Ability.OnSelect">
+            <summary>
+            Delegate called everytime your ability is selected. All changes wanted should be registered here.
+            </summary>
+        </member>
+        <member name="F:AbilityChanger.Ability.OnUnselect">
+            <summary>
+            Delegate called everytime your ability is unselected. Changes made in manager's FSM are automatically reset while changes made in script/script base managers MUST be undone here.
+            Changes made in the environment, like destroying GameObjects, should be done here
+            </summary>
+        </member>
+        <member name="F:AbilityChanger.Ability.relatedAbilities">
+            <summary>
+            You can asks AC to switch other abilities (custom or not) when switching to your ability. The format is  { abilityType: AbilityName}
+            </summary>
+        </member>
+        <member name="F:AbilityChanger.AbilityChanger.ManagersMap">
+            <summary>
+            Dictionary that holds every ability manager 
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.AbilityChanger.RegisterAbility(AbilityChanger.Ability)">
+            <summary>
+            Register a new ability for the given ability type
+            </summary>
+            <param name="ability">An Ability</param>
+        </member>
+        <member name="M:AbilityChanger.AbilityChanger.DeregisterAbility(AbilityChanger.Ability)">
+            <summary>
+            Deregister an ability from ability changer
+            </summary>
+            <param name="ability">An Ability</param>
+        </member>
+        <member name="M:AbilityChanger.ComponentExtensions.CloneFsm(UnityEngine.GameObject,PlayMakerFSM)">
+            <summary>
+            Clones a PlayMakerFSM and adds it to the GO
+            </summary>
+            <param name="go"> The GameObject which will hold the cloned FSM</param>
+            <param name="toAdd"> The PlayMakerFSM to clone</param>
+            <returns>Returns a reference to the cloned PMFSM</returns>
+        </member>
+        <member name="M:AbilityChanger.Base.CycloneSlash.ReplaceSpawn(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned when cyclone starts
+            </summary>
+            <param name="prefab"> the GamewObject to be spawned</param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.CycloneSlash.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue after </param>
+        </member>
+        <member name="M:AbilityChanger.Base.CycloneSlash.DuringSlash(System.Action)">
+            <summary>
+            Register an action to be called every fixed frame during cyclone's slashing animation and extended animation
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="T:AbilityChanger.Base.CycloneSlash.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.Dash.OnTrigger(System.Func{System.Boolean})">
+            <summary>
+            Register an action to be called when the dash button is pressed.
+            </summary>
+            <param name="action"> The action to be called. It must return <c>true</c> if it wants the default behaviour to continue, <c>false</c> if it doesn't</param>
+        </member>
+        <member name="M:AbilityChanger.Base.Dash.OnDashing(System.Func{System.Boolean})">
+            <summary>
+            Register an action to be called every frame while dashing
+            </summary>
+            <param name="action"> The action to be called. It must return <c>true</c> if it wants the default behaviour to continue, <c>false</c> if it doesn't</param>
+        </member>
+        <member name="M:AbilityChanger.Base.DashSlash.ReplaceSpawn(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Dash Slash
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.DashSlash.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue after </param>
+        </member>
+        <member name="T:AbilityChanger.Base.DashSlash.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.DoubleJump.OnTrigger(System.Func{System.Boolean})">
+            <summary>
+            Register a function to be called when the wings input is pressed.
+            </summary>
+            <param name="func"> The function to be called. It must return <c>true</c> if it wants the default behaviour to continue or <c>false</c> if it doesn't</param>
+        </member>
+        <member name="M:AbilityChanger.Base.DoubleJump.DuringDoubleJump(System.Func{System.Boolean})">
+            <summary>
+            Register a function to be called every fixed frame while the wings animation plays.
+            </summary>
+            <param name="func"> The function to be called. It must return <c>true</c> if it wants the default behaviour to continue or <c>false</c> if it doesn't</param>
+        </member>
+        <member name="M:AbilityChanger.Base.Dreamgate.ReplaceSpawn(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the Dream Gate Game Object to be spawned
+            </summary>
+            <param name="prefab"> The game object to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at Dream Gate's default position </param>
+        </member>
+        <member name="T:AbilityChanger.Base.Dreamgate.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.DreamNail.ReplaceSpawn(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the Dream Nail Game Object to be spawned
+            </summary>
+            <param name="prefab"> The game object to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at Dream Gate's default position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.DreamNail.OnInpact(System.Func{UnityEngine.GameObject,System.Boolean})">
+            <summary>
+            Register a function to be called when an enemy receives Dream Nail's impact
+            </summary>
+            <param name="func"> The function to be called. It must receive a GameObject as parameter.  It must return <c>true</c> if it wants the default behaviour to continue or <c>false</c> if it doesn't</param>
+        </member>
+        <member name="T:AbilityChanger.Base.DreamNail.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.Fireball.ReplaceSpawnFireball1(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Vengefull Spirit
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Fireball.ReplaceSpawnFireball2(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Shade Soul
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Fireball.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an anction to be called when the ability button is pressed
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue after</param>
+        </member>
+        <member name="T:AbilityChanger.Base.Fireball.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.Focus.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Focus.DuringFocus(System.Action)">
+            <summary>
+            Register an action to be called every fixed frame during focus
+            </summary>
+            <param name="focusAction"> The action to be called </param>
+        </member>
+        <member name="T:AbilityChanger.Base.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.GreatSlash.ReplaceSpawn(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Great Slash
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.GreatSlash.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue </param>
+        </member>
+        <member name="T:AbilityChanger.Base.GreatSlash.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.Nail.OnTrigger(System.Func{System.Boolean})">
+            <summary>
+            Register a function to be called when the nail button is pressed
+            </summary>
+            <param name="func"> The function to be called. It must return <c> true</c> if it wants the default behaviour to continue, <c>false</c> if it doesn't</param>
+        </member>
+        <member name="M:AbilityChanger.Base.Nail.OnAttackCancel(System.Func{System.Boolean})">
+            <summary>
+            Register a function to be called when the nail swing animation is canceled
+            </summary>
+            <param name="func"> The function to be called. It must return <c> true</c> if it wants the default behaviour to continue, <c>false</c> if it doesn't</param>        
+        </member>
+        <member name="M:AbilityChanger.Base.Quake.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue after </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Quake.OnLandQuake1(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the player lands after a Desolate Dive
+            </summary>
+            <param name="landAction">The action to be called </param>
+            <param name="shouldContinue"> If the default behavior should continue after </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Quake.OnLandQuake2(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the player lands after a Descending Dark
+            </summary>
+            <param name="landAction">The action to be called </param>
+            <param name="shouldContinue"> If the default behavior should continue after </param>
+        </member>
+        <member name="T:AbilityChanger.Base.Quake.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.Scream.ReplaceSpawnScream1(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Howlling Wraiths
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Scream.ReplaceSpawnScream2(UnityEngine.GameObject,System.Nullable{UnityEngine.Vector3})">
+            <summary>
+            Replaces the GameObject spawned by Abyss Shriek
+            </summary>
+            <param name="prefab"> The GameObject to spawn </param>
+            <param name="position"> The position it should spawn. If not provided, spaws at the Knight's current position </param>
+        </member>
+        <member name="M:AbilityChanger.Base.Scream.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue </param>
+        </member>
+        <member name="T:AbilityChanger.Base.Scream.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.SuperDash.OnTrigger(System.Action,System.Boolean)">
+            <summary>
+            Register an action to be called when the ability would start
+            </summary>
+            <param name="triggerAction"> the action to call</param>
+            <param name="shouldContinue"> if the default behaviour should continue </param>
+        </member>
+        <member name="M:AbilityChanger.Base.SuperDash.DuringCharging(System.Action)">
+            <summary>
+            Register an action to be called every fixed frame during cdash's charging animation
+            </summary>
+            <param name="chargingAction"></param>
+        </member>
+        <member name="M:AbilityChanger.Base.SuperDash.DuringSuperDash(System.Action)">
+            <summary>
+            Register an action to be called every fixed frame during cdash's dash animation
+            </summary>
+            <param name="dashingAction"></param>
+        </member>
+        <member name="T:AbilityChanger.Base.SuperDash.states">
+            <summary>
+            The FSM states Ability Changer considers belong to this Ability and expects to be modified without repercutions. 
+            Shared states between abilities can be accessed withing the Base.CommonStates namespace, changes in those states can affect other abilities and should be done with care  
+            </summary>
+        </member>
+        <member name="M:AbilityChanger.Base.WallJump.OnTrigger(System.Func{System.Boolean})">
+            <summary>
+            Register a function to be called when the walljump animation starts
+            </summary>
+            <param name="func"> The function to be called. It must return <c> true</c> if it wants the default behaviour to continue, <c>false</c> if it doesn't</param>
+        </member>
+    </members>
+</doc>

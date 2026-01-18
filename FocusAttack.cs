@@ -46,14 +46,11 @@ namespace PureVesselSkills
         private void PreloadAudio()
         {
             PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
-            PlayMakerFSM hkPrimeBlastControl = PureVesselSkills.preloadedGO["HKPrimeBlast"].LocateMyFSM("Control");
-            blastSound = (AudioClip)hkPrimeBlastControl.GetAction<AudioPlayerOneShotSingle>("Sound", 1).audioClip.Value;
         }
 
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
         {
             orig(self, go, damageSide, damageAmount, hazardType);
-            PlayerData playerData = PlayerData.instance;
 
             focusCancelled = false;
             FocusBlast.DestroySelf();
@@ -109,7 +106,7 @@ namespace PureVesselSkills
                 yield return new WaitForSeconds(Random.Range(0f, 0.45f));
 
                 GameObject blast = Instantiate(PureVesselSkills.preloadedGO["Blast"]);
-                Blast blastScript = blast.AddComponent<Blast>();
+                BlastBubble blastScript = blast.AddComponent<BlastBubble>();
                 blastScript.spawnUp = (i % 2 != 0);
                 blastScript.blastNumber = i;
                 blastScript.sourcePos = hcPos;

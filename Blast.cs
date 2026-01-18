@@ -12,13 +12,35 @@ using System.Linq;
 
 namespace PureVesselSkills
 {
-    public class Blast : MonoBehaviour
+    public class BlastBubble
     {
-        public bool spawnUp = false;
-        public int blastNumber = 0;
-        public Vector3 sourcePos { get; set; }
+        private GameObject gameObject;
+        private BlastBubbleCore blastBubbleCore;
 
-        public AudioClip blastSound;
+        public BlastBubble()
+        {
+            blastBubbleCore = gameObject.AddComponent<BlastBubbleCore>();
+        }
+
+        public void Activate()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void SetPosition(Vector3 pos)
+        {
+            gameObject.transform.position = pos;
+        }
+
+        public Vector3 GetPosition()
+        {
+            return gameObject.transform.position;
+        }
+    }
+
+    public class BlastBubbleCore : MonoBehaviour
+    {
+        private AudioClip blastSound;
         private AudioSource audioSource;
 
         private const int Damage = 80;
@@ -26,17 +48,27 @@ namespace PureVesselSkills
 
         private void Awake()
         {
-            anim = gameObject.GetComponent<Animator>();
-            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            ConfigureAnimator();
 
-            audioSource = gameObject.AddComponent<AudioSource>();
+            blastSound = SoundClips.blastAudio;
+            audioSource = HeroController.instance.GetComponent<AudioSource>();
 
-            SetBlastPosition();
             Destroy(gameObject.FindGameObjectInChildren("hero_damager"));
             AddDamageEnemiesComponentToBlast();
 
             StartCoroutine(WaitAndAddHitboxDamage());
             StartCoroutine(WaitAndDestroy());
+        }
+
+        public void SetBlastActive()
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void ConfigureAnimator()
+        {
+            anim = gameObject.GetComponent<Animator>();
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         }
 
         private IEnumerator WaitAndAddHitboxDamage()
@@ -60,16 +92,6 @@ namespace PureVesselSkills
         {
             audioSource.pitch = Random.Range(1f, 1.25f);
             audioSource.PlayOneShot(blastSound, 1f);
-        }
-
-        private void SetBlastPosition()
-        {
-            Vector3 pos = gameObject.transform.position;
-            pos.x = (sourcePos.x - 20) + (8 * blastNumber) + Random.Range(-1.5f, 1.5f);
-            pos.y = sourcePos.y + (spawnUp ? Random.Range(11.88f, 14.08f) : Random.Range(7.88f, 10.08f)) - 7f;
-
-            blastNumber++;
-            gameObject.transform.position = pos;
         }
 
         private void AddDamageEnemiesComponentToBlast()

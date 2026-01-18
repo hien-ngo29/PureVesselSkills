@@ -42,24 +42,24 @@ namespace PureVesselSkills
 
         private void StartMod()
         {
-            // PureVesselAudioSource.DestroySelf();
-            // GroundSlamAttack.DestroySelf();
-            // SpikeShootingAttack.DestroySelf();
-            // FocusAttack.DestroySelf();
+            PureVesselAudioSource.DestroySelf();
+            GroundSlamAttack.DestroySelf();
+            SpikeShootingAttack.DestroySelf();
+            FocusAttack.DestroySelf();
 
             PureVesselAudioSource.Init();
-            // GroundSlamAttack.Init();
-            // SpikeShootingAttack.Init();
-            // FocusAttack.Init();
+            GroundSlamAttack.Init();
+            SpikeShootingAttack.Init();
+            FocusAttack.Init();
 
-            abilities = new() {
-                new GroundSlamAttackAbility()
-            };
+            // abilities = new() {
+            //     new GroundSlamAttackAbility()
+            // };
 
-            foreach (var ability in abilities)
-            {
-                RegisterAbility(ability);
-            }
+            // foreach (var ability in abilities)
+            // {
+            //     RegisterAbility(ability);
+            // }
 
             audioSource = GameObject.Find("PureVesselAudioSource").GetComponent<AudioSource>();
         }

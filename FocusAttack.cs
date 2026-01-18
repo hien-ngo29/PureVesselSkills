@@ -19,7 +19,7 @@ namespace PureVesselSkills
         private bool focusCancelled = false;
         private bool focusCompleted = false;
 
-        private AudioClip blastSound;
+        private ChainedBlastsSpawner chainedBlastsSpawner;
 
         public static void Init()
         {
@@ -35,17 +35,12 @@ namespace PureVesselSkills
 
         private void Awake()
         {
-            On.HeroController.TakeDamage += OnHeroTakeDamage;
+            chainedBlastsSpawner = new();
 
+            On.HeroController.TakeDamage += OnHeroTakeDamage;
             spellControl = hc.spellControl;
 
-            PreloadAudio();
             AddAttackToFSM();
-        }
-
-        private void PreloadAudio()
-        {
-            PlayMakerFSM pvControl = PureVesselSkills.preloadedGO["PV"].LocateMyFSM("Control");
         }
 
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
@@ -64,7 +59,7 @@ namespace PureVesselSkills
 
         private void AddAfterBlastAttackToFSM()
         {
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Heal", 16, SpawnBlast);
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Heal", 16, chainedBlastsSpawner.SpawnChainedBlasts);
         }
 
         private void AddFocusBlastAttackToFSM()
@@ -96,23 +91,6 @@ namespace PureVesselSkills
             GameObject focusBlast = Instantiate(PureVesselSkills.preloadedGO["FocusBlast"], hc.transform.position, Quaternion.identity);
             focusBlast.AddComponent<FocusBlast>();
             focusBlast.SetActive(true);
-        }
-
-        private IEnumerator SpawnBlast()
-        {
-            Vector3 hcPos = hc.transform.position;
-            for (int i = 0; i < 5; i++)
-            {
-                yield return new WaitForSeconds(Random.Range(0f, 0.45f));
-
-                GameObject blast = Instantiate(PureVesselSkills.preloadedGO["Blast"]);
-                BlastBubble blastScript = blast.AddComponent<BlastBubble>();
-                blastScript.spawnUp = (i % 2 != 0);
-                blastScript.blastNumber = i;
-                blastScript.sourcePos = hcPos;
-                blastScript.blastSound = blastSound;
-                blast.SetActive(true);
-            }
         }
     }
 }

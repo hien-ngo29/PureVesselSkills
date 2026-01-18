@@ -15,11 +15,11 @@ namespace PureVesselSkills
     public class BlastBubble
     {
         private GameObject gameObject;
-        private BlastBubbleCore blastBubbleCore;
 
         public BlastBubble()
         {
-            blastBubbleCore = gameObject.AddComponent<BlastBubbleCore>();
+            gameObject = GameObject.Instantiate(PureVesselSkills.preloadedGO["Blast"]);
+            gameObject.AddComponent<BlastBubbleCore>();
         }
 
         public void Activate()

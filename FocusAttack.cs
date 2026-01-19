@@ -88,8 +88,14 @@ namespace PureVesselSkills
             }
 
             focusBlast = new();
-            focusBlast.SetDelayTimeBeforeShowingUp(0.891f);
+            focusBlast.SetDelayTimeBeforeShowingUp(GetHealingTime());
             focusBlast.Activate();
+        }
+
+        private float GetHealingTime()
+        {
+            var playerData = PlayerData.instance;
+            return 0.891f * (playerData.equippedCharm_7 ? 0.66f : 1f) * (playerData.equippedCharm_34 ? 1.65f : 1f);
         }
     }
 }

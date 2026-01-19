@@ -22,7 +22,7 @@ namespace PureVesselSkills
         public void SetDelayTimeBeforeShowingUp(float duration)
         {
             FocusBlastCore focusBlastCore = gameObject.GetComponent<FocusBlastCore>();
-            focusBlastCore.DelayTime = duration;
+            focusBlastCore.SetDelayTime(duration);
         }
 
         protected override void AddAttackCoreToGameObject()
@@ -36,12 +36,6 @@ namespace PureVesselSkills
     {
         private float delayTime;
 
-        public float DelayTime
-        {
-            get { return delayTime; }
-            set { delayTime = value; }
-        }
-
         private AudioSource audioSource;
         private AudioClip ballUpSound;
         private AudioClip completeSound;
@@ -53,9 +47,25 @@ namespace PureVesselSkills
             audioSource.PlayOneShot(ballUpSound, 1f);
 
             gameObject.name = "Hero Focus Blast";
+
+            MonoBehaviour[] behaviours = gameObject.GetComponents<MonoBehaviour>();
+            foreach (var mb in behaviours)
+            {
+                Modding.Logger.Log(mb.GetType().Name);
+            }
+
+            Destroy(gameObject.GetComponent<DeactivateAfterDelay>());
+
             AddDamageEnemiesComponentToBlast();
             StartCoroutine(WaitAndAddHitboxDamage());
             StartCoroutine(WaitAndDestroy());
+        }
+
+        public void SetDelayTime(float delayTime)
+        {
+            this.delayTime = delayTime;
+            var animator = gameObject.GetComponent<Animator>();
+            animator.speed = 0.891f / delayTime;
         }
 
         private void PreloadAudio()
@@ -95,12 +105,7 @@ namespace PureVesselSkills
 
         private IEnumerator WaitAndDestroy()
         {
-            yield return new WaitForSeconds(2.5f);
-            Destroy(gameObject);
-        }
-
-        public void DestroySelf()
-        {
+            yield return new WaitForSeconds(5f);
             Destroy(gameObject);
         }
     }

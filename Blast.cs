@@ -12,29 +12,12 @@ using System.Linq;
 
 namespace PureVesselSkills
 {
-    public class BlastBubble
+    public class BlastBubble: PVAttackObject
     {
-        private GameObject gameObject;
-
-        public BlastBubble()
+        protected override void AddAttackCoreToGameObject()
         {
             gameObject = GameObject.Instantiate(PureVesselSkills.preloadedGO["Blast"]);
             gameObject.AddComponent<BlastBubbleCore>();
-        }
-
-        public void Activate()
-        {
-            gameObject.SetActive(true);
-        }
-
-        public void SetPosition(Vector3 pos)
-        {
-            gameObject.transform.position = pos;
-        }
-
-        public Vector3 GetPosition()
-        {
-            return gameObject.transform.position;
         }
     }
 

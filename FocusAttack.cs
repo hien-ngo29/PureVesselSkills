@@ -20,6 +20,7 @@ namespace PureVesselSkills
         private bool focusCompleted = false;
 
         private ChainedBlastsSpawner chainedBlastsSpawner;
+        private FocusBlast focusBlast;
 
         public static void Init()
         {
@@ -36,6 +37,7 @@ namespace PureVesselSkills
         private void Awake()
         {
             chainedBlastsSpawner = new();
+            focusBlast = new();
 
             On.HeroController.TakeDamage += OnHeroTakeDamage;
             spellControl = hc.spellControl;
@@ -48,7 +50,6 @@ namespace PureVesselSkills
             orig(self, go, damageSide, damageAmount, hazardType);
 
             focusCancelled = false;
-            FocusBlast.DestroySelf();
         }
 
         private void AddAttackToFSM()
@@ -64,7 +65,7 @@ namespace PureVesselSkills
 
         private void AddFocusBlastAttackToFSM()
         {
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus Start", 0, SpawnFocusBlast);
+            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus", 0, SpawnFocusBlast);
             spellControl.InsertMethod("Focus Start", () => focusCancelled = false, 0);
 
             spellControl.InsertMethod("Set HP Amount", () => focusCompleted = true, 0);
@@ -73,24 +74,22 @@ namespace PureVesselSkills
             {
                 if (!focusCompleted)
                 {
-                    FocusBlast.DestroySelf();
+                    
                 }
             }, 0);
         }
 
         private IEnumerator SpawnFocusBlast()
         {
-            yield return new WaitForSeconds(0.25f);
-
             if (focusCancelled)
             {
                 focusCancelled = false;
                 yield break;
             }
 
-            GameObject focusBlast = Instantiate(PureVesselSkills.preloadedGO["FocusBlast"], hc.transform.position, Quaternion.identity);
-            focusBlast.AddComponent<FocusBlast>();
-            focusBlast.SetActive(true);
+            focusBlast = new();
+            focusBlast.SetDelayTimeBeforeShowingUp(0.891f);
+            focusBlast.Activate();
         }
     }
 }

@@ -12,14 +12,43 @@ using System.Linq;
 
 namespace PureVesselSkills
 {
-    public class FocusBlast : MonoBehaviour
+    public class FocusBlast : PVAttackObject
     {
+        public FocusBlast() : base()
+        {
+            SetPosition(HeroController.instance.gameObject.transform.position);
+        }
+
+        public void SetDelayTimeBeforeShowingUp(float duration)
+        {
+            FocusBlastCore focusBlastCore = gameObject.GetComponent<FocusBlastCore>();
+            focusBlastCore.DelayTime = duration;
+        }
+
+        protected override void AddAttackCoreToGameObject()
+        {
+            gameObject = GameObject.Instantiate(PureVesselSkills.preloadedGO["FocusBlast"]);
+            gameObject.AddComponent<FocusBlastCore>();
+        }
+    }
+
+    public class FocusBlastCore : MonoBehaviour
+    {
+        private float delayTime;
+
+        public float DelayTime
+        {
+            get { return delayTime; }
+            set { delayTime = value; }
+        }
+
         private AudioSource audioSource;
         private AudioClip ballUpSound;
         private AudioClip completeSound;
 
         private void Awake()
         {
+            delayTime = 0.891f;
             PreloadAudio();
             audioSource.PlayOneShot(ballUpSound, 1f);
 
@@ -35,7 +64,7 @@ namespace PureVesselSkills
             ballUpSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Ball Up", 2).audioClip.Value;
             completeSound = (AudioClip)pvControl.GetAction<AudioPlayerOneShotSingle>("Focus Burst", 8).audioClip.Value;
 
-            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource = HeroController.instance.gameObject.GetComponent<AudioSource>();
         }
 
         private void AddDamageEnemiesComponentToBlast()
@@ -49,7 +78,7 @@ namespace PureVesselSkills
 
         private IEnumerator WaitAndAddHitboxDamage()
         {
-            yield return new WaitForSeconds(0.891f);
+            yield return new WaitForSeconds(delayTime);
 
             audioSource.PlayOneShot(completeSound, 1f);
 
@@ -70,9 +99,9 @@ namespace PureVesselSkills
             Destroy(gameObject);
         }
 
-        public static void DestroySelf()
+        public void DestroySelf()
         {
-            Destroy(GameObject.Find("Hero Focus Blast"));
+            Destroy(gameObject);
         }
     }
 }

@@ -48,8 +48,7 @@ namespace PureVesselSkills
         private void OnHeroTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, CollisionSide damageSide, int damageAmount, int hazardType)
         {
             orig(self, go, damageSide, damageAmount, hazardType);
-
-            focusCancelled = false;
+            focusBlast.DestroySelf();
         }
 
         private void AddAttackToFSM()
@@ -65,26 +64,19 @@ namespace PureVesselSkills
 
         private void AddFocusBlastAttackToFSM()
         {
-            FrogCore.Fsm.FsmUtil.InsertCoroutine(spellControl, "Focus", 0, SpawnFocusBlast);
-            spellControl.InsertMethod("Focus Start", () => focusCancelled = false, 0);
-
-            spellControl.InsertMethod("Set HP Amount", () => focusCompleted = true, 0);
-            spellControl.InsertMethod("Focus Start", () => { focusCompleted = false; }, 0);
-            spellControl.InsertMethod("Focus Cancel", () =>
-            {
-                if (!focusCompleted)
-                {
-                    
-                }
+            spellControl.InsertMethod("Focus", SpawnFocusBlast, 0);
+            spellControl.InsertMethod("Focus Cancel", () => { 
+                focusCancelled = true; 
+                focusBlast.DestroySelf(); 
             }, 0);
+            spellControl.InsertMethod("Regain Control", () => focusCancelled = false, 0);
         }
 
-        private IEnumerator SpawnFocusBlast()
+        private void SpawnFocusBlast()
         {
             if (focusCancelled)
             {
-                focusCancelled = false;
-                yield break;
+                return;
             }
 
             focusBlast = new();

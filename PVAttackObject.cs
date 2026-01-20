@@ -18,6 +18,11 @@ namespace PureVesselSkills
             gameObject.SetActive(true);
         }
 
+        public void DestroySelf()
+        {
+            GameObject.Destroy(gameObject);
+        }
+
         public void SetPosition(Vector3 pos)
         {
             gameObject.transform.position = pos;

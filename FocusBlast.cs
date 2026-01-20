@@ -34,7 +34,7 @@ namespace PureVesselSkills
 
     public class FocusBlastCore : MonoBehaviour
     {
-        private float delayTime;
+        private float delayTime = 0.891f;
 
         private AudioSource audioSource;
         private AudioClip ballUpSound;
@@ -42,7 +42,6 @@ namespace PureVesselSkills
 
         private void Awake()
         {
-            delayTime = 0.891f;
             PreloadAudio();
             audioSource.PlayOneShot(ballUpSound, 1f);
 

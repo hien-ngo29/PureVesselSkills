@@ -17,7 +17,6 @@ namespace PureVesselSkills
         private HeroController hc => HeroController.instance;
         private PlayMakerFSM spellControl;
         private bool focusCancelled = false;
-        private bool focusCompleted = false;
 
         private ChainedBlastsSpawner chainedBlastsSpawner;
         private FocusBlast focusBlast;

@@ -23,6 +23,7 @@ namespace PureVesselSkills
         {
             FocusBlastCore focusBlastCore = gameObject.GetComponent<FocusBlastCore>();
             focusBlastCore.SetDelayTime(duration);
+            SetAnimationSpeedScale(0.891f / duration);
         }
 
         protected override void AddAttackCoreToGameObject()
@@ -47,12 +48,6 @@ namespace PureVesselSkills
 
             gameObject.name = "Hero Focus Blast";
 
-            MonoBehaviour[] behaviours = gameObject.GetComponents<MonoBehaviour>();
-            foreach (var mb in behaviours)
-            {
-                Modding.Logger.Log(mb.GetType().Name);
-            }
-
             Destroy(gameObject.GetComponent<DeactivateAfterDelay>());
 
             AddDamageEnemiesComponentToBlast();
@@ -63,8 +58,6 @@ namespace PureVesselSkills
         public void SetDelayTime(float delayTime)
         {
             this.delayTime = delayTime;
-            var animator = gameObject.GetComponent<Animator>();
-            animator.speed = 0.891f / delayTime;
         }
 
         private void PreloadAudio()

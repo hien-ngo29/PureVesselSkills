@@ -32,5 +32,11 @@ namespace PureVesselSkills
         {
             return gameObject.transform.position;
         }
+
+        public void SetAnimationSpeedScale(float scale)
+        {
+            var animator = gameObject.GetComponent<Animator>();
+            animator.speed = scale;
+        }
     }
 }

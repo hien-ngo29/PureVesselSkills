@@ -46,11 +46,13 @@ namespace PureVesselSkills
             GroundSlamAttack.DestroySelf();
             SpikeShootingAttack.DestroySelf();
             FocusAttack.DestroySelf();
+            UpSpellAttack.DestroySelf();
 
             PureVesselAudioSource.Init();
             GroundSlamAttack.Init();
             SpikeShootingAttack.Init();
             FocusAttack.Init();
+            UpSpellAttack.Init();
 
             // abilities = new() {
             //     new GroundSlamAttackAbility()

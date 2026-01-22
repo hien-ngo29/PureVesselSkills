@@ -15,8 +15,8 @@ namespace PureVesselSkills
 
         private PlayMakerFSM _fsm;
 
-        private const int PlumeDamage = 7;
-        private const int PlumeDamageShaman = 11;
+        private const int PlumeDamage = 21;
+        private const int PlumeDamageShaman = 30;
         private const float PlumeTime = 0.7f;
 
         private void Awake()
